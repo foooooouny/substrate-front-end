@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Grid, Card, Statistic } from 'semantic-ui-react';
 
-import { useSubstrate } from './substrate-lib';
+// import { useSubstrate } from './substrate-lib';
+import { useSelector } from 'react-redux';
 import { TxButton } from './substrate-lib/components';
 
 function Main (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   const { accountPair } = props;
 
   // The transaction submission status
@@ -75,7 +76,7 @@ function Main (props) {
 }
 
 export default function TemplateModule (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   return api.query.templateModule && api.query.templateModule.something
     ? <Main {...props} />
     : null;

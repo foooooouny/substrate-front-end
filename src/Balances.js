@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Grid, Button } from 'semantic-ui-react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useSubstrate } from './substrate-lib';
+import { useSelector } from 'react-redux';
 
 export default function Main (props) {
-  const { api, keyring } = useSubstrate();
+  const { api, keyring } = useSelector(state => state.config);
   const accounts = keyring.getPairs();
   const [balances, setBalances] = useState({});
 

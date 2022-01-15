@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Icon, Grid } from 'semantic-ui-react';
 
-import { useSubstrate } from './substrate-lib';
+// import { useSubstrate } from './substrate-lib';
+import { useSelector } from 'react-redux';
 
 function Main (props) {
-  const { api, socket } = useSubstrate();
+  const { api, socket } = useSelector(state => state.config);
   const [nodeInfo, setNodeInfo] = useState({});
 
   useEffect(() => {
@@ -42,7 +43,7 @@ function Main (props) {
 }
 
 export default function NodeInfo (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   return api.rpc &&
     api.rpc.system &&
     api.rpc.system.chain &&

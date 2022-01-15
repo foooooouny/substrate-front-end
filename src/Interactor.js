@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Form, Dropdown, Input, Label } from 'semantic-ui-react';
 
-import { useSubstrate } from './substrate-lib';
 import { TxButton, TxGroupButton } from './substrate-lib/components';
+import { useSelector } from 'react-redux';
 
 const argIsOptional = (arg) =>
   arg.type.toString().startsWith('Option<');
 
 function Main (props) {
-  const { api, jsonrpc } = useSubstrate();
+  const { api, jsonrpc } = useSelector(state => state.config);
   const { accountPair } = props;
   const [status, setStatus] = useState(null);
 
@@ -266,6 +266,6 @@ function InteractorSubmit (props) {
 }
 
 export default function Interactor (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   return api.tx ? <Main {...props} /> : null;
 }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Statistic, Grid, Card, Icon } from 'semantic-ui-react';
 
-import { useSubstrate } from './substrate-lib';
+import { useSelector } from 'react-redux';
 
 function Main (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   const { finalized } = props;
   const [blockNumber, setBlockNumber] = useState(0);
   const [blockNumberTimer, setBlockNumberTimer] = useState(0);
@@ -55,7 +55,7 @@ function Main (props) {
 }
 
 export default function BlockNumber (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   return api.derive &&
     api.derive.chain &&
     api.derive.chain.bestNumber &&

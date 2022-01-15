@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import {
@@ -11,51 +11,38 @@ import {
   Label
 } from 'semantic-ui-react';
 
+// import { useSubstrate } from './substrate-lib';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAccount, setPair } from './store/features/accountSlice';
+import { setAccount, setBalance } from './store/features/accountSlice';
 
 function Main (props) {
+  console.log('------ account main');
+  const { account, balance } = useSelector((state) => state.account);
   const dispatch = useDispatch();
-  const { account } = useSelector(state => state.account);
   // api apiError apiState jsonrpc keyring keyringState socket
-  const { keyring, keyringState } = useSelector(state => state.config);
-  const { address } = account;
+  const { keyring } = useSelector(state => state.config);
 
-  const accounts = keyring.getPairs().map(pair => ({
-    address: pair.address,
-    name: pair.meta.name
+  const accounts = keyring.getPairs().map(account => ({
+    address: account.address,
+    name: account.meta.name
   }));
 
   // Get the list of accounts we possess the private key for
-  const keyringOptions = accounts.map(item => ({
-    key: item.address,
-    value: item.address,
-    text: item.name.toUpperCase(),
+  const keyringOptions = accounts.map(account => ({
+    key: account.address,
+    value: account.address,
+    text: account.name.toUpperCase(),
     icon: 'user'
   }));
 
-  const { address: initialAddress, name: initialName } = accounts[0] || {};
-
   // Set the initial address
   useEffect(() => {
-    dispatch(setAccount({ address: initialAddress, name: initialName }));
-  }, [dispatch, initialAddress, initialName]);
+    dispatch(setAccount(accounts[0]));
+  });
 
-  const setAccountAddress = address => {
+  const onChange = address => {
     dispatch(setAccount(accounts.filter(item => item.address === address)[0]));
   };
-
-  const setBalance = balance => {
-    if (!balance) return;
-    dispatch(setAccount({ address, balance: { human: balance.data.free.toHuman(), hex: balance.data.free.toHex() } }));
-  };
-
-  useEffect(() => {
-    const pair = address &&
-      keyringState === 'READY' &&
-      keyring.getPair(address);
-    dispatch(setPair(pair));
-  }, [address, keyringState, keyring, dispatch]);
 
   return (
     <Menu
@@ -73,7 +60,7 @@ function Main (props) {
           <Image src={`${process.env.PUBLIC_URL}/assets/substrate-logo.png`} size='mini' />
         </Menu.Menu>
         <Menu.Menu position='right' style={{ alignItems: 'center' }}>
-          { !address
+          { !account.address
             ? <span>
               Add your account with the{' '}
               <a
@@ -85,13 +72,13 @@ function Main (props) {
               </a>
             </span>
             : null }
-          <CopyToClipboard text={address}>
+          <CopyToClipboard text={account.address}>
             <Button
               basic
               circular
               size='large'
               icon='user'
-              color={address ? 'green' : 'red'}
+              color={account.address ? 'green' : 'red'}
             />
           </CopyToClipboard>
           <Dropdown
@@ -101,11 +88,11 @@ function Main (props) {
             placeholder='Select an account'
             options={keyringOptions}
             onChange={(_, dropdown) => {
-              setAccountAddress(dropdown.value);
+              onChange(dropdown.value);
             }}
-            value={address}
+            value={account.address}
           />
-          <BalanceAnnotation address={address} setBalanceMethod={setBalance}/>
+          <BalanceAnnotation address={account.address} balance={balance} />
         </Menu.Menu>
       </Container>
     </Menu>
@@ -113,9 +100,9 @@ function Main (props) {
 }
 
 function BalanceAnnotation (props) {
-  const { address, setBalanceMethod } = props;
-  const [balance, setBalance] = useState(0);
+  const { address, balance } = props;
   const { api } = useSelector(state => state.config);
+  const dispatch = useDispatch();
 
   // When account address changes, update subscriptions
   useEffect(() => {
@@ -124,8 +111,7 @@ function BalanceAnnotation (props) {
     // If the user has selected an address, create a new subscription
     address &&
       api.query.system.account(address, balance => {
-        setBalance(balance.data.free.toHuman());
-        setBalanceMethod(balance);
+        dispatch(setBalance({ hex: balance.data.free.toHex(), human: balance.data.free.toHuman() }));
       })
         .then(unsub => {
           unsubscribe = unsub;
@@ -138,7 +124,7 @@ function BalanceAnnotation (props) {
   return address
     ? <Label pointing='left'>
         <Icon name='money' color='green' />
-        {balance}
+        {balance.human}
       </Label>
     : null;
 }

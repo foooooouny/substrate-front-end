@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Feed, Grid, Button } from 'semantic-ui-react';
 
-import { useSubstrate } from './substrate-lib';
+import { useSelector } from 'react-redux';
 
 // Events to be filtered from feed
 const FILTERED_EVENTS = [
@@ -12,7 +12,7 @@ const eventName = ev => `${ev.section}:${ev.method}`;
 const eventParams = ev => JSON.stringify(ev.data);
 
 function Main (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   const [eventFeed, setEventFeed] = useState([]);
 
   useEffect(() => {
@@ -20,8 +20,10 @@ function Main (props) {
     let keyNum = 0;
     const allEvents = async () => {
       unsub = await api.query.system.events(events => {
+        console.log('--- events', events);
         // loop through the Vec<EventRecord>
         events.forEach(record => {
+          console.log('---- event', record);
           // extract the phase, event and the event types
           const { event, phase } = record;
 
@@ -68,7 +70,7 @@ function Main (props) {
 }
 
 export default function Events (props) {
-  const { api } = useSubstrate();
+  const { api } = useSelector(state => state.config);
   return api.query && api.query.system && api.query.system.events
     ? <Main {...props} />
     : null;

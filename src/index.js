@@ -1,10 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
 import Home from './pages/Home';
-// import TxDetail from './pages/detail/tx';
+import TxDetail from './pages/detail/tx';
+import AddressDetail from './pages/detail/address';
+import BlockDetail from './pages/detail/block';
 import store from './store';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { CONNECT_INIT, CONNECT, CONNECT_SUCCESS, CONNECT_ERROR, LOAD_KEYRING, SET_KEYRING, KEYRING_ERROR } from './store/features/configSlice';
@@ -27,6 +30,7 @@ function Main () {
 
     const provider = new WsProvider(socket);
     const _api = new ApiPromise({ provider, rpc: jsonrpc });
+    console.log('============ jsonrpc', jsonrpc, _api);
 
     // Set listeners for disconnection and reconnection event.
     _api.on('connected', () => {
@@ -74,9 +78,13 @@ function Main () {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
-          <Route index element={<Home />} />
-          {/* <Route path="tx/:blockNumber" element={<TxDetail />} /> */}
+          <Route index path="" element={<Home />} />
+          <Route path="address/:address" element={<AddressDetail />} />
+          <Route path="tx/:tx" element={<TxDetail />} />
+          <Route path="block/:block" element={<BlockDetail />} />
+          <Route path="*" element={<Home />} />
         </Route>
+        <Route path="*" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

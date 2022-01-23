@@ -11,6 +11,7 @@ function Main (props) {
   useEffect(() => {
     const getInfo = async () => {
       try {
+        console.log('-- api.rpc.system', api.rpc.system);
         const [chain, nodeName, nodeVersion] = await Promise.all([
           api.rpc.system.chain(),
           api.rpc.system.name(),
@@ -35,7 +36,7 @@ function Main (props) {
           <Card.Description>{socket}</Card.Description>
         </Card.Content>
         <Card.Content extra>
-          <Icon name='setting' />v{nodeInfo.nodeVersion}
+          <Icon name='setting' />{nodeInfo.nodeVersion}
         </Card.Content>
       </Card>
     </Grid.Column>

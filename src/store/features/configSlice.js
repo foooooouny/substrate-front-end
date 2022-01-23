@@ -3,11 +3,13 @@ import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import queryString from 'query-string';
 
 import config from '../../config';
+console.log('-- jsonrpc', jsonrpc)
 
 const parsedQuery = queryString.parse(window.location.search);
 const connectedSocket = parsedQuery.rpc || config.PROVIDER_SOCKET;
 console.log(`Connected socket: ${connectedSocket}`);
 
+console.log('======= jsonrpc', { ...jsonrpc, ...config.RPC }, config.RPC)
 export const configSlice = createSlice({
   name: 'config',
   initialState: {

@@ -13,6 +13,7 @@ import {
 
 import { useSelector, useDispatch } from 'react-redux';
 import { setAccount, setPair } from './store/features/accountSlice';
+import Logo from '@/assets/substrate-logo.png';
 
 function Main (props) {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ function Main (props) {
     dispatch(setAccount(accounts.filter(item => item.address === address)[0]));
   };
 
-  const setBalance = balance => {
+  const setBalanceFunc = balance => {
     if (!balance) return;
     dispatch(setAccount({ address, balance: { human: balance.data.free.toHuman(), hex: balance.data.free.toHex() } }));
   };
@@ -70,7 +71,7 @@ function Main (props) {
     >
       <Container>
         <Menu.Menu>
-          <Image src={`${process.env.PUBLIC_URL}/assets/substrate-logo.png`} size='mini' />
+          <Image src={ Logo } size='mini' />
         </Menu.Menu>
         <Menu.Menu position='right' style={{ alignItems: 'center' }}>
           { !address
@@ -105,7 +106,7 @@ function Main (props) {
             }}
             value={address}
           />
-          <BalanceAnnotation address={address} setBalanceMethod={setBalance}/>
+          <BalanceAnnotation address={address} setBalanceMethod={setBalanceFunc}/>
         </Menu.Menu>
       </Container>
     </Menu>
@@ -113,9 +114,14 @@ function Main (props) {
 }
 
 function BalanceAnnotation (props) {
-  const { address, setBalanceMethod } = props;
+  const { address: inputAddress, setBalanceMethod } = props;
+  const [address, setAddress] = useState(inputAddress);
   const [balance, setBalance] = useState(0);
   const { api } = useSelector(state => state.config);
+
+  useEffect(() => {
+    setAddress(inputAddress);
+  }, [inputAddress, setAddress]);
 
   // When account address changes, update subscriptions
   useEffect(() => {
@@ -133,7 +139,7 @@ function BalanceAnnotation (props) {
         .catch(console.error);
 
     return () => unsubscribe && unsubscribe();
-  }, [api, address]);
+  }, [api, address, setBalance]);
 
   return address
     ? <Label pointing='left'>

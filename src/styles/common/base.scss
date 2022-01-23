@@ -1,0 +1,20 @@
+@import '../mixins';
+
+.tit {
+  &-h1 {
+    font-size: $h1-tit;
+    color: $h1-color;
+  }
+  &-h1-sub {
+    font-size: $h1-sub-tit;
+    color: $h1-sub-color;
+  }
+  &-h2 {
+    font-size: $h2-tit;
+    color: $h2-color;
+  }
+  &-h3 {
+    font-size: $h3-tit;
+    color: $h3-color;
+  }
+}

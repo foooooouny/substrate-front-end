@@ -1,6 +1,5 @@
 import React, { createRef } from 'react';
 import { Dimmer, Loader, Grid, Sticky, Message } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
 
 import { DeveloperConsole } from './substrate-lib/components';
 

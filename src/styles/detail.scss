@@ -1,0 +1,18 @@
+
+@import './mixins';
+
+.detail-box {
+  .detail {
+    &-overview {
+      font-size: 14px;
+    }
+    &-h1 {
+      font-size: $h1-tit;
+      color: $h1-color;
+    }
+    &-h1-sub {
+      font-size: $h1-sub-tit;
+      color: $h1-sub-color;
+    }
+  }
+}
